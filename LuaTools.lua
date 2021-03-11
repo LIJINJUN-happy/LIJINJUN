@@ -450,7 +450,7 @@ end
 --也就是说拷贝后的地址均是一样的,这样会影响前者的数据,深复制是为了让他们有独立的地址,保证数据间互不干扰)
 function Patch_DeepCopy(tab)
 	local temp_tab = {}                    --创建一个表作为返回表（新表和参数表地址不一样，故为深复制）
-	function fun(head,tail,len)            --递归函数（逐层复制）
+	local function fun(head,tail,len)      --递归函数（逐层复制）
 		len = len + 1                      --每次调用+1次
 		if len > 10 then                   --大于十次不允许知己断点
 			assert(nil,"深度大于10层")
@@ -466,6 +466,50 @@ function Patch_DeepCopy(tab)
 	end
 	fun(tab,temp_tab,0)
 	return temp_tab
+end
+
+
+--延遲函數(利用ping的性質作為延遲)
+function Patch_Sleep(n)
+    if n > 0 then
+    	os.execute("ping -n " .. tonumber(n + 1) .. " localhost > NUL") 
+    end
+end
+
+
+--表真实长度（不区分数组和键值对表）
+function Patch_Size(tab)
+	if not tab or type(tab) ~= "table" then
+		return
+	end
+	local num = 0
+	for _ , _ in pairs(tab) do
+		num = num + 1
+	end
+	return num
+end
+
+
+--判断是数组还是纯键值对或者是既不是纯数组也不是纯键值对
+function Patch_ArrayOrMap(tab)
+	local mun = Patch_Size(tab)
+	local num = #tab
+	--if array
+	if num >= 1 and num == mun then
+		return "Array"        --假如表长度不为0且长度为所有子元素数量,即为纯数组
+	end
+	--if array and Map
+	if num >= 1 and num ~= mun then
+		return "ArrayAndMap"  --假如长度不为零且表长度与所有子元素数量不符,即又不是纯数组也不是纯键值对表
+	end
+	--if Map
+	if num == 0 and mun >= 1 then
+		return "Map"          --假如表格长度为零,但是遍历的时候子元素不为0,则全部都是键值对（纯键值对表）
+	end
+	--if nil table
+	if num == 0 and mun == 0 then
+		return                --假如是个空表，返回空
+	end
 end
 
 ------------------------------------------------------------------------------------------------------------------------------------------------

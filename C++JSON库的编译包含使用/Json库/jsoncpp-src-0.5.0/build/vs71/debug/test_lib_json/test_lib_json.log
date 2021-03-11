@@ -1,0 +1,44 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(37,5): warning MSB4211: 正在首次将属性“IntermediateOutputPath”设置为某个值，但已在“C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets (36,5)”处使用了该属性。
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(340,5): warning MSB4211: 正在首次将属性“CleanFile”设置为某个值，但已在“C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets (36,5)”处使用了该属性。
+cl : 命令行 warning D9035: “Gm”选项已否决，并将在将来的版本中移除
+  main.cpp
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(78,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(79,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(80,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(81,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(82,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(83,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(84,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(85,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(86,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(87,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(95,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(96,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(104,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(105,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(115,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(123,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(124,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(125,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(135,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(136,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(145,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(155,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(165,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(166,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\src\test_lib_json\main.cpp(195,4): warning C4838: 从“long”转换到“unsigned int”需要收缩转换
+  jsontest.cpp
+  正在生成代码...
+jsontest.obj : warning LNK4075: 忽略“/EDITANDCONTINUE”(由于“/SAFESEH”规范)
+  test_lib_json.vcxproj -> C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\build\vs71\debug\test_lib_json\test_lib_json.exe
+  Running all unit tests
+  Testing ValueTest/size: OK
+  Testing ValueTest/isObject: OK
+  Testing ValueTest/isArray: OK
+  Testing ValueTest/isBool: OK
+  Testing ValueTest/isInt: OK
+  Testing ValueTest/isUInt: OK
+  Testing ValueTest/isDouble: OK
+  Testing ValueTest/isString: OK
+  Testing ValueTest/isNull: OK
+  All 9 tests passed

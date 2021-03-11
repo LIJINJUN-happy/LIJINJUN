@@ -1,0 +1,19 @@
+包含操作
+1.下载库源文件
+2.把Json源文件内名为 Src 和 include 的文件夹放到我们的工程文件内
+3.打开调试属性选择 , 选择VC++目录 中的包含目录选择，然后新增一个路径（该路径为工程文件夹内的include路径）
+4.然后把Src文件夹里面的lib_json文件夹内的json_reader.cpp , json_value .cpp 以及json_write.cpp 这三个cpp文件添加到工程的源文件目录内
+
+
+
+读写操作
+读取：Json::Reader read ;
+      Json::Value v;
+	  然后用 read 对象中的方法parse(string,v) 得出一个布尔类型对象（表示解析成功或者失败）,这时候str数据转入v中保存
+	  最后可以下标方式访问v对象取得Json中的键值对象如——>  v["a"].asInt() , v["b"].asString() 等等方式获取键值对的对应的值。
+	  
+写入：Json::FastWrite write;
+      Json::Value v;
+	  然后用Value["xxx"] = xxxxxx;的形式来把键值对保存进去v中
+	  最后用write对象中的write函数方式来把键值对转换为string类型,作为传输的数据可以进行TCP通信
+	  

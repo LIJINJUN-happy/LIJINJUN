@@ -1,0 +1,2 @@
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\build\vs71\debug\jsontest\jsontest.exe
+C:\Users\Windows\Desktop\jsoncpp-src-0.5.0\build\vs71\debug\jsontest\jsontest.pdb

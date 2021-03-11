@@ -1,0 +1,2 @@
+C:\Users\Windows\source\repos\SER\Debug\SER.exe
+C:\Users\Windows\source\repos\SER\Debug\SER.pdb

@@ -512,4 +512,21 @@ function Patch_ArrayOrMap(tab)
 	end
 end
 
+
+--判斷是不是統一類型的列表
+function Patch_IsSameType(tab)
+	local num = 1
+	local first
+	for _,v in pairs(tab) do     --遍歷所有元素
+		if num == 1 then         --假如是第一個子元素
+			first = type(v)      --記錄下第一個子元素類型
+			num = num + 1        --數量加一
+		else                     --否則
+			if first ~= type(v) then
+				return false
+			end
+		end
+	end
+	return true
+end
 ------------------------------------------------------------------------------------------------------------------------------------------------

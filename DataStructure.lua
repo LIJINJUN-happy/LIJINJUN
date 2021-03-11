@@ -98,7 +98,36 @@ function CreatList(tab)
 end
 
 
---判断是不是链表或者栈或者是列队其中之一
+--Create The ForwardList Structure(双向链表)
+function CreatForwardList(tab)
+  if not tab or type(tab) ~= "table" or #tab <= 0 then --判断是否无参或者空表
+    return
+  end
+  local return_tab = {}                                --返回值（成型的双向鏈表）
+  local tab_index = 1                                  --當前索引
+  local function fun(r_t,t_i)                          --尾調函數
+    if not (r_t and t_i and tab[t_i]) then             --判斷索引的值爲否空
+      return
+    end
+    --開始創建鏈表節點
+    r_t.StructureType = "ForwardList"                  --得出結構類型（双向鏈表）
+    r_t.Head = return_tab                              --每個節點的Head字段都是只想頭部（避免遍歷鏈表的時候丟失了頭部節點）
+    r_t.Val = tab[t_i]                                 --賦值
+    --判斷下個節點是否有值
+    if tab[t_i + 1] then
+      r_t.Next = {}                                    --存在下個節點
+      r_t.Next.Previous = r_t                          --下个节点的previous指向当前的节点
+    else
+      r_t.Next = nil                                   --不存在下個節點
+    end
+    fun(r_t.Next,t_i + 1)                              --尾調給下個節點賦值
+  end
+  fun(return_tab,tab_index)
+  return return_tab
+end
+
+
+--判断是不是链表或者栈或者是列队或者是双向链表其中之一
 function StructType(tab)
   if not (tab and type(tab) == "table") then --是否有参且为表类型
     return
@@ -107,7 +136,7 @@ function StructType(tab)
   if not res then                            --判断是否有此字段
     return
   end
-  if res ~= "List" and res ~= "Queue" and res ~= "Stack" then
+  if res ~= "List" and res ~= "Queue" and res ~= "Stack" and res ~= "ForwardList" then
     return
   end
   return res

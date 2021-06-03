@@ -13,6 +13,9 @@ void MergeSort();     //归并排序
 vector<int> Split(int head, int tail,int *);//拆
 vector<int> Merge(vector<int>,vector<int>); //合
 
+void SoonSort();      //快速排序
+void SplitMerge(int ,int,int*);
+
 int main()
 {
     BubblingSort();
@@ -22,6 +25,8 @@ int main()
     PractiseSort();
     cout << endl << endl;
     MergeSort();
+    cout << endl << endl;
+    SoonSort();
     cout << endl << endl;
 }
 
@@ -208,4 +213,62 @@ vector<int> Merge(vector<int> h, vector<int> t)
         }
     }
     return back;
+}
+
+void SoonSort()
+{
+    int arr[11]{ 11,23,111,23,334,22,1,2,45,578,4 };
+    int len = 11;
+    cout << "原数组为：";
+    for (int i = 0; i < 11; i++)
+    {
+        cout << arr[i] << "  ";
+    }
+    cout << "  " << "经过快速排序法排序后为： ";
+    SplitMerge(0, len - 1, arr);
+    for (int i = 0; i < 11; i++)
+    {
+        cout << arr[i] << "  ";
+    }
+}
+
+void SplitMerge(int head, int tail, int* arr)
+{
+    if (head == tail || head - tail == -1)
+    {
+        if (arr[head] > arr[tail])
+        {
+            int temp = arr[head];
+            arr[head] = arr[tail];
+            arr[tail] = temp;
+        }
+        return;
+    }
+    int now = tail;//每次以结尾元素为分界点
+    for (int i = head; i < now;)//从头开始索引遍历
+    {
+        if (arr[i] > arr[now])//比它大就放在后面，否则保持在前面（比它小）
+        {
+            //cout << "arr[i]= " << arr[i];
+            int temp = arr[i];//记录下该值（后面的都往后移动）
+            for (int j = i; j < tail; j++)
+                arr[j] = arr[j + 1];//逐个往前迁移
+            arr[tail] = temp;        //最后把该记录下的值移动到now的地方
+            now--;                  //now索引向前进一位
+        }
+        else
+        {
+            i++;
+        }
+    }
+    if (now == tail)
+    {
+        SplitMerge(head, tail - 1, arr);
+    }
+    else
+    {
+        SplitMerge(head, now - 1, arr);
+        SplitMerge(now + 1,tail , arr);
+    }
+    return;
 }

@@ -42,32 +42,11 @@ function Class:Create()
 
     if not New_MetaTable["_Private"]["_Save"][index_Name] then                      --判断字段存不存在（不存在才可以注册）
       New_MetaTable["_Private"]["_Save"][index_Name] = default_value
-
-      --对象方法：获取私有变量值
-      New_MetaTable._Protected["Get" .. index_Name] = function(self)                --Get方法
-        if New_MetaTable["_Private"]["_Save"][index_Name] then                      --返回前判断存不存在该字段
-          return New_MetaTable["_Private"]["_Save"][index_Name]                     --存在便返回值
-        else
-          assert(nil,"不存在" .. index_Name .. " 该字段名")
-        end
-      end
-
-      --对象方法：设置私有变量值
-      New_MetaTable._Protected["Set" .. index_Name] = function(self,value)          --Set方法
-        local ttype = type(New_MetaTable["_Private"]["_Save"][index_Name])          --替换前判断类型是否一致
-        if ttype == type(value) then
-          New_MetaTable["_Private"]["_Save"][index_Name] = value
-        else
-          assert(nil,"Set" .. index_Name .. " 字段设置的值与原先的值类型不一致" ) 
-        end
-      end
-
       --设置Assignment字段，给每个新增的字段排序好（方便赋值的时候与参数对应）
       local total_save = LuaTools.Size(New_MetaTable["_Private"]["_Save"]) or 0
       local total_temp = LuaTools.Size(New_MetaTable["_Private"]["_Temp"]) or 0
       local total = (total_save + total_temp) or 1
       New_MetaTable["_Private"]["_Assignment"][index_Name] = (total + 1)            --代表这个字段是第 total+1 个注册的字段
-
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
     end
@@ -84,32 +63,11 @@ function Class:Create()
 
     if not New_MetaTable["_Private"]["_Temp"][index_Name] then                      --判断字段存不存在（不存在才可以注册）
       New_MetaTable["_Private"]["_Temp"][index_Name] = default_value
-
-      --对象方法：获取私有变量值
-      New_MetaTable._Protected["Get" .. index_Name] = function(self)                --Get方法
-        if New_MetaTable["_Private"]["_Temp"][index_Name] then                      --返回前判断存不存在该字段
-          return New_MetaTable["_Private"]["_Temp"][index_Name]                     --存在便返回值
-        else
-          assert(nil,"不存在" .. index_Name .. " 该字段名")
-        end
-      end
-
-      --对象方法：设置私有变量值
-      New_MetaTable._Protected["Set" .. index_Name] = function(self,value)          --Set方法
-        local ttype = type(New_MetaTable["_Private"]["_Temp"][index_Name])          --替换前判断类型是否一致
-        if ttype == type(value) then
-          New_MetaTable["_Private"]["_Temp"][index_Name] = value
-        else
-          assert(nil,"Set" .. index_Name .. " 字段设置的值与原先的值类型不一致" )
-        end
-      end
-
-       --设置Assignment字段，给每个新增的字段排序好（方便赋值的时候与参数对应）
+      --设置Assignment字段，给每个新增的字段排序好（方便赋值的时候与参数对应）
       local total_save = LuaTools.Size(New_MetaTable["_Private"]["_Save"]) or 0
       local total_temp = LuaTools.Size(New_MetaTable["_Private"]["_Temp"]) or 0
       local total = (total_save + total_temp) or 1
       New_MetaTable["_Private"]["_Assignment"][index_Name] = (total + 1)            --代表这个字段是第 total+1 个注册的字段
-
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
     end
@@ -135,9 +93,59 @@ function Class:Create()
     if #temp_tab > 0 then                                                      --创建类对象时候有显式赋值（非默认参数）
     end
 
+    --Save 的 Set And Get 函数方式
+    local fun_save = function(index_Name)
+      --对象方法：获取私有变量值
+      new_metaTable._Protected["Get" .. index_Name] = function(self)                --Get方法
+        if new_metaTable["_Private"]["_Save"][index_Name] then                      --返回前判断存不存在该字段
+          return new_metaTable["_Private"]["_Save"][index_Name]                     --存在便返回值
+        else
+          assert(nil,"不存在" .. index_Name .. " 该字段名")
+        end
+      end
+      --对象方法：设置私有变量值
+      new_metaTable._Protected["Set" .. index_Name] = function(self,value)          --Set方法
+        local ttype = type(new_metaTable["_Private"]["_Save"][index_Name])          --替换前判断类型是否一致
+        if ttype == type(value) then
+          new_metaTable["_Private"]["_Save"][index_Name] = value
+        else
+          assert(nil,"Set" .. index_Name .. " 字段设置的值与原先的值类型不一致" ) 
+        end
+      end
+    end
+
+    --Temp 的 Set And Get 函数方式
+    local fun_temp = function(index_Name)
+      --对象方法：获取私有变量值
+      new_metaTable._Protected["Get" .. index_Name] = function(self)                --Get方法
+        if new_metaTable["_Private"]["_Temp"][index_Name] then                      --返回前判断存不存在该字段
+          return new_metaTable["_Private"]["_Temp"][index_Name]                     --存在便返回值
+        else
+          assert(nil,"不存在" .. index_Name .. " 该字段名")
+        end
+      end
+      --对象方法：设置私有变量值
+      new_metaTable._Protected["Set" .. index_Name] = function(self,value)          --Set方法
+        local ttype = type(new_metaTable["_Private"]["_Temp"][index_Name])          --替换前判断类型是否一致
+        if ttype == type(value) then
+          new_metaTable["_Private"]["_Temp"][index_Name] = value
+        else
+          assert(nil,"Set" .. index_Name .. " 字段设置的值与原先的值类型不一致" ) 
+        end
+      end
+    end
+
+    --_Save字段的成员变量,令它们有Get and Set function
+    for i,_ in pairs(new_metaTable._Private._Save) do
+      fun_save(i)
+    end
+    --_Temp字段的成员变量,令它们有Get and Set function
+    for i,_ in pairs(new_metaTable._Private._Temp) do
+      fun_temp(i)
+    end
+
     return new_class
   end
-  
 
   return New_Class
 end

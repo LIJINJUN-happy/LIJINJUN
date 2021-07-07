@@ -399,5 +399,53 @@ LuaTools.Split = function(str,n)
 end
 
 
+--得出数组中最大值
+LuaTools.Max = function(Tab)
+  local result
+  if LuaTools.IsArray(Tab) == true then 
+    if LuaTools.IsSameTypeArray(Tab) then
+      if Tab[1] == "number" or Tab[1] == "string" then
+        local temp_tab = LuaTools.DeepCopy(Tab) or {}
+        table.sort(temp_tab)
+        if temp_tab[1] then        --存在数据
+          result = temp_tab[#Tab]  --取最后一个
+        end
+      else
+        assert(nil,"表中的所有元素类型要指定为 number类型 或者 string类型！")
+      end
+    else
+      assert(nil,"表中的所有元素需要一致！")
+    end
+  else
+    assert(nil,"参数需要指定为纯数组类型！")
+  end
+  return result
+end
+
+
+--得出数组中最小值
+LuaTools.Min = function(Tab)
+  local result
+  if LuaTools.IsArray(Tab) == true then 
+    if LuaTools.IsSameTypeArray(Tab) then
+      if Tab[1] == "number" or Tab[1] == "string" then
+        local temp_tab = LuaTools.DeepCopy(Tab) or {}
+        table.sort(temp_tab)
+        if temp_tab[1] then        --存在数据
+          result = temp_tab[1]     --取第一个
+        end
+      else
+        assert(nil,"表中的所有元素类型要指定为 number类型 或者 string类型！")
+      end
+    else
+      assert(nil,"表中的所有元素需要一致！")
+    end
+  else
+    assert(nil,"参数需要指定为纯数组类型！")
+  end
+  return result
+end
+
+
 ----------------------------------------------------------------------Lua工具库函数----------------------------------------------------------------------
 return LuaTools

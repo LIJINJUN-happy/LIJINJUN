@@ -1,5 +1,5 @@
 --库名为：LuaTools
-LuaTools = {}
+local LuaTools = {}
 ----------------------------------------------------------------------Lua工具库函数----------------------------------------------------------------------
 
 
@@ -19,7 +19,7 @@ LuaTools.DeepCopy = function(Tab)
 		for i,v in pairs(head) do          --遍历所有的数据
 			if type(v) == "table" then       --假如子元素是个表类型
 				tail[i] = {}                   --以该子元素的索引作为新表索引进行表类型子元素的深复制
- 				fun(v,head[i],len)
+ 				fun(v,tail[i],len)
 			else
 				tail[i] = v                    --非表类型直接复制（非表类型可以直接拷贝）
 			end

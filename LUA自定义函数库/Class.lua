@@ -62,6 +62,12 @@ function Class:Create()
         end
       end
 
+      --设置Assignment字段，给每个新增的字段排序好（方便赋值的时候与参数对应）
+      local total_save = LuaTools.Size(New_MetaTable["_Private"]["_Save"]) or 0
+      local total_temp = LuaTools.Size(New_MetaTable["_Private"]["_Temp"]) or 0
+      local total = (total_save + total_temp) or 1
+      New_MetaTable["_Private"]["_Assignment"][index_Name] = (total + 1)            --代表这个字段是第 total+1 个注册的字段
+
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
     end
@@ -98,6 +104,12 @@ function Class:Create()
         end
       end
 
+       --设置Assignment字段，给每个新增的字段排序好（方便赋值的时候与参数对应）
+      local total_save = LuaTools.Size(New_MetaTable["_Private"]["_Save"]) or 0
+      local total_temp = LuaTools.Size(New_MetaTable["_Private"]["_Temp"]) or 0
+      local total = (total_save + total_temp) or 1
+      New_MetaTable["_Private"]["_Assignment"][index_Name] = (total + 1)            --代表这个字段是第 total+1 个注册的字段
+
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
     end
@@ -106,7 +118,7 @@ function Class:Create()
   --类方法：生成类对象的成员函数(所有生成的成员变量以及成员函数需要一样)
   function New_MetaTable._Protected:New(...)
     --仿造类中的形式排序好元表索引的对象
-    local new_class , new_metaTable = {} , LuaTools.DeepCopy(new_metaTable)    --新类以及新类的元表(与MetaTable一样) 
+    local new_class , new_metaTable = {} , LuaTools.DeepCopy(New_MetaTable)    --新类以及新类的元表(与New_MetaTable一样) 
     setmetatable(new_class,new_metaTable)                                      --设置New_MetaTable为新类的元表
     new_metaTable.__index = new_metaTable["_Public"]                           --公有区域为新类元表的__index
     setmetatable(new_metaTable["_Public"],new_metaTable["_Public"])            --设自己为自己的元表
@@ -122,6 +134,8 @@ function Class:Create()
     local temp_tab = {...}                                                     --把参数都放在表里
     if #temp_tab > 0 then                                                      --创建类对象时候有显式赋值（非默认参数）
     end
+
+    return new_class
   end
   
 

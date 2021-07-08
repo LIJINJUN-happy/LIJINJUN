@@ -9,7 +9,7 @@ local MetaTable = {
   ["_Private"] = {         --私有区域（存放相关的成员变量,Save:保存在数据库的信息,Temp:临时信息）
     ["_Save"] = {},        --保存成员变量
     ["_Temp"] = {},        --临时成员变量
-    ["_Assignment"] = {},  --赋值顺序（顺序即是调用 RegisterSave 函数的顺序）
+    ["_Assignment"] = {},  --New函数赋值参数的顺序（顺序即是调用 RegisterSave 函数的顺序）
   },
   ["_Protected"] = {},     --保护区域 (一些信息)
   ["_Public"] = {},        --公有区域（存放执行函数 以及 存放操作私有成员变量的操作函数Set Get RegisterSave）
@@ -89,8 +89,28 @@ function Class:Create(ClassName)
     --私有区域中的也需要保留（但其存放的均是默认初始化的值）可通过Get和Set函数来更换新的值
 
     --处理传回来的参数 ... 但lua5.2开始没有pack函数了，所以可以直接放在table里面处理
-    local temp_tab = {...}                                                     --把参数都放在表里
-    if #temp_tab > 0 then                                                      --创建类对象时候有显式赋值（非默认参数）
+    local temp_tab = {...}                                                                                   --把参数都放在表里
+    local len = #temp_tab                                                                                    --参数数量
+    if len > 0 then                                                                                          --创建类对象时候有显式赋值（非默认参数）
+      local len_Save,len_Temp = LuaTools.Size(new_metaTable._Private._Save or {}),LuaTools.Size(new_metaTable._Private._Temp or {})
+      if len == (len_Save + len_Temp) then                                                                   --参数数量和类注册变量的数量一致
+        for index_Name , value in pairs(new_metaTable._Private._Assignment or {}) do                         --遍历所有的成员变量
+          local Val = new_metaTable._Private._Save[index_Name] or new_metaTable._Private._Temp[index_Name]   --得出索引对应的成员变量值（不是在_Save就是在_Temp中）
+          if type(Val) == type(temp_tab[value]) then                                                         --假如成员变量值类型和所赋值的类型相同则进行替换
+            if new_metaTable._Private._Save[index_Name] then                   --假若该字段存在于_Save中
+              new_metaTable._Private._Save[index_Name] = temp_tab[value]
+            else                                                               --假若该字段存在于_Temp中
+              new_metaTable._Private._Temp[index_Name] = temp_tab[value]
+            end
+          else                                                                                               --否则直接报错
+            assert(nil,string.format("参数%s  的值与类注册所对应字段 %s的值不一致！",tostring(value),index_Name))
+            return
+          end
+        end
+      else
+        assert(nil,"  New函数: 非默认参数生成对象的时候,必须保证参数的数量等于该对象所属类注册的成员变量的数量 ")
+        return
+      end
     end
 
     --Save 的 Set And Get 函数方式
@@ -145,11 +165,11 @@ function Class:Create(ClassName)
     end
     
     --设置对象的信息，在_Protected字段里面
-    local base_type = new_metaTable._Protected.ClassName or ""
-    LuaTools.Clean(new_metaTable._Protected)        --清除表中所有的字段
-    new_metaTable._Protected.Type = "object"        --标识为对象类型
-    new_metaTable._Protected.ClassName = base_type  --对象所基于类的类名
-    new_metaTable._Protected.CreateTime = os.time() --创建时间
+    local base_type = new_metaTable._Protected._ClassName or ""
+    LuaTools.Clean(new_metaTable._Protected)         --清除表中所有的字段
+    new_metaTable._Protected._Type = "object"        --标识为对象类型
+    new_metaTable._Protected._ClassName = base_type  --对象所基于类的类名(可以知道不停对象是不是同类的)
+    new_metaTable._Protected._CreateTime = os.time() --创建对象的时间
 
     return new_class
   end
@@ -159,9 +179,9 @@ function Class:Create(ClassName)
     assert(nil,"Create 函数的参数必须为字符串，此参数是所创建类的类名") 
     return
   end
-  New_MetaTable._Protected.Type = "class"         --标识为类类型
-  New_MetaTable._Protected.ClassName = ClassName  --设置类名
-  New_MetaTable._Protected.CreateTime = os.time() --创建时间
+  New_MetaTable._Protected._Type = "class"         --标识为类类型
+  New_MetaTable._Protected._ClassName = ClassName  --设置类名
+  New_MetaTable._Protected._CreateTime = os.time() --创建类模板的时间
 
   return New_Class
 end

@@ -21,7 +21,7 @@ local Class = {}
 assert(setmetatable(Class,MetaTable),"Class.lua 设置基类元表的时候发生了预料之外的错误！")
 
 --创建类模版
-function Class:Create()
+function Class:Create(ClassName)
   --排好元表索引顺序以及各区域的元表关系
   local metaTable = getmetatable(self)                                       --获取Class元表
   local New_Class , New_MetaTable = {} , LuaTools.DeepCopy(metaTable) or {}  --新类以及新类的元表(与MetaTable一样) 
@@ -143,9 +143,25 @@ function Class:Create()
     for i,_ in pairs(new_metaTable._Private._Temp) do
       fun_temp(i)
     end
+    
+    --设置对象的信息，在_Protected字段里面
+    local base_type = new_metaTable._Protected.ClassName or ""
+    LuaTools.Clean(new_metaTable._Protected)        --清除表中所有的字段
+    new_metaTable._Protected.Type = "object"        --标识为对象类型
+    new_metaTable._Protected.ClassName = base_type  --对象所基于类的类名
+    new_metaTable._Protected.CreateTime = os.time() --创建时间
 
     return new_class
   end
+  
+  --设置类信息，在_Protected字段里面
+  if type(ClassName) ~= "string" then
+    assert(nil,"Create 函数的参数必须为字符串，此参数是所创建类的类名") 
+    return
+  end
+  New_MetaTable._Protected.Type = "class"         --标识为类类型
+  New_MetaTable._Protected.ClassName = ClassName  --设置类名
+  New_MetaTable._Protected.CreateTime = os.time() --创建时间
 
   return New_Class
 end

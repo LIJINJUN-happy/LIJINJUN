@@ -30,6 +30,31 @@ LuaTools.DeepCopy = function(Tab)
 end
 
 
+--类型函数 除了内置类型之外 还有额外增加了自己定义的类或对象类型,注意!!! 对象 和 类模板 类型不属于 table类型
+LuaTools.Type = function(value)
+  local ret = type(value)                               --value类型
+  if ret == "table" then                                --是表类型
+    local temp_tab = getmetatable(value)
+    if temp_tab then                                    --是否存在元表
+      if temp_tab._Protected and temp_tab._Protected._Type and temp_tab._Protected._ClassName and temp_tab._Protected._CreateTime then
+        if temp_tab._Protected._Type == "object" then 
+          return "object",temp_tab._Protected._ClassName--返回对象类型
+        end
+        if temp_tab._Protected._Type == "class" then 
+          return "class"                                --返回类类型
+        end 
+      else
+        return ret                                      --不存在_Protected _Type等字段均是单纯的table类型
+      end 
+    else                                                --不存在元表直接返回是单纯的的表类型
+      return ret
+    end
+  else                                                  --非表类型直接返回
+    return ret
+  end
+end
+
+
 --真实长度（适用于表和字符串）
 LuaTools.Size = function(Tab_Or_Str)
   if not Tab_Or_Str or (type(Tab_Or_Str) ~= "string" and type(Tab_Or_Str) ~= "table")  then
@@ -190,14 +215,21 @@ LuaTools.Remove = function(Tab_Or_Str,Tab_Or_Val)
 end
 
 
---数组表内元素是否为统一类型
+--数组表内元素是否为统一类型 注意！！！(即使是object类型，但是其所属类不一致也不属于同一类型)
 LuaTools.IsSameTypeArray = function(Tab)
-  if LuaTools.IsArray(Tab) then           --判断是不是数组
-    local first_one = Tab[1]              --头元素
-    local first_one_type = type(first_one)--头元素类型
+  if LuaTools.IsArray(Tab) then                    --判断是不是数组
+    local first_one = Tab[1]                       --头元素
+    local first_one_type = LuaTools.Type(first_one)--头元素类型
     for _,value in ipairs(Tab) do
-      if first_one_type ~= type(value) then
-        return false                      --其中有遇到不一致的就直接返回false
+      if first_one_type ~= LuaTools.Type(value) then
+        return false                               --其中有遇到不一致的就直接返回false
+      else                                         --进一步判断对象类型是不是属于同一个类
+        if first_one_type == "object" then         --假如是对象类型
+          local temp_tab = getmetatable(first_one) --得出元表
+          if temp_tab._Protected._ClassName ~= (getmetatable(value)._Protected._ClassName) then
+            return false
+          end
+        end
       end
     end
     return true

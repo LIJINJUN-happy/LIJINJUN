@@ -49,8 +49,8 @@ function Class:Create(ClassName)
       New_MetaTable["_Private"]["_Assignment"][index_Name] = total                  --代表这个字段是第 total 个注册的字段
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
-    end
   end
+end
 
   --类方法：注册临时成员变量(索引字段，默认值)
   function New_MetaTable._Public:RegisterTemp(index_Name,default_value)
@@ -71,7 +71,7 @@ function Class:Create(ClassName)
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
     end
-  end
+end
 
   --类方法：生成类对象的成员函数(所有生成的成员变量以及成员函数这时候是一样的)
   function New_MetaTable._Public:New(...)
@@ -104,14 +104,14 @@ function Class:Create(ClassName)
             end
           else                                                                                               --否则直接报错
             assert(nil,string.format("参数%s  的值与类注册所对应字段 %s的值不一致！",tostring(value),index_Name))
-            return
-          end
+          return
         end
-      else
-        assert(nil,"  New函数: 非默认参数生成对象的时候,必须保证参数的数量等于该对象所属类注册的成员变量的数量 ")
-        return
       end
+    else
+      assert(nil,"  New函数: 非默认参数生成对象的时候,必须保证参数的数量等于该对象所属类注册的成员变量的数量 ")
+      return
     end
+  end
 
     --Save 的 Set And Get 函数方式
     local fun_save = function(index_Name)

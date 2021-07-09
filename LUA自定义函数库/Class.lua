@@ -103,15 +103,15 @@ end
               new_metaTable._Private._Temp[index_Name] = temp_tab[value]
             end
           else                                                                                               --否则直接报错
-            assert(nil,string.format("参数%s  的值与类注册所对应字段 %s的值不一致！",tostring(value),index_Name))
-          return
+            assert(nil,string.format("New函数: 参数%s的值与类注册所对应字段'%s'的值不一致,此处的数据类型应是一个'%s'型数据,但实际传入数据的类型为'%s'型",tostring(value),index_Name,type(Val),type(temp_tab[value])))
+            return
+          end
         end
+      else
+        assert(nil,"New函数: 非默认参数生成对象的时候,必须保证参数的数量等于该对象所属类注册的成员变量的数量 ")
+        return
       end
-    else
-      assert(nil,"  New函数: 非默认参数生成对象的时候,必须保证参数的数量等于该对象所属类注册的成员变量的数量 ")
-      return
     end
-  end
 
     --Save 的 Set And Get 函数方式
     local fun_save = function(index_Name)
@@ -129,7 +129,7 @@ end
         if ttype == type(value) then
           new_metaTable["_Private"]["_Save"][index_Name] = value
         else
-          assert(nil,"Set" .. index_Name .. " 字段设置的值与原先的值类型不一致" ) 
+          assert(nil,string.format("Set%s()函数参数值与原先的值类型不一致,理应传入的值类型为‘%s’型,但实际传入数据的类型为‘%s’型",index_Name,ttype,type(value)) ) 
         end
       end
     end
@@ -150,7 +150,7 @@ end
         if ttype == type(value) then
           new_metaTable["_Private"]["_Temp"][index_Name] = value
         else
-          assert(nil,"Set" .. index_Name .. " 字段设置的值与原先的值类型不一致" ) 
+          assert(nil,string.format("Set%s()函数参数值与原先的值类型不一致,理应传入的值类型为‘%s’型,但实际传入数据的类型为‘%s’型",index_Name,ttype,type(value)) ) 
         end
       end
     end

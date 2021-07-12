@@ -49,8 +49,8 @@ function Class:Create(ClassName)
       New_MetaTable["_Private"]["_Assignment"][index_Name] = total                  --代表这个字段是第 total 个注册的字段
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
+    end
   end
-end
 
   --类方法：注册临时成员变量(索引字段，默认值)
   function New_MetaTable._Public:RegisterTemp(index_Name,default_value)
@@ -71,7 +71,7 @@ end
     else                                                                            --字段存在不可重复注册（因为字段是唯一变量）
       assert(false,index_Name .. "  字段已被注册，不可重复注册同一字段")
     end
-end
+  end
 
   --类方法：生成类对象的成员函数(所有生成的成员变量以及成员函数这时候是一样的)
   function New_MetaTable._Public:New(...)

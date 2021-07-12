@@ -73,6 +73,33 @@ function Class:Create(ClassName)
     end
   end
 
+  --类方法：继承类模板（也就是派生出新的类模板，以至于新的类模板是一个独立的新表，与基类模板相互不影响但是可在已有内容上拓展延伸，各自有独立的空间）
+  function New_MetaTable._Public:Child(NewClassName)
+    local new_class , new_metaTable = {} , LuaTools.DeepCopy(New_MetaTable)    --新类以及新类的元表(与New_MetaTable一样) 
+    setmetatable(new_class,new_metaTable)                                      --设置new_metaTable为新类的元表
+    new_metaTable.__index = new_metaTable["_Public"]                           --公有区域为新类元表的__index
+    setmetatable(new_metaTable["_Public"],new_metaTable["_Public"])            --设自己为自己的元表
+    new_metaTable["_Public"].__index = new_metaTable["_Protected"]             --到protected区域结束,私有不可访问
+
+    --此时此刻，经过DeepCopy函数的深复制，新的派生类模板已经和原基类模板的字段内容一致，且各自拥有各自的空间
+    --设置新派生类信息，在_Protected字段里面
+    if type(NewClassName) ~= "string" then
+      assert(nil,"Child 函数的参数必须为字符串，此参数是所继承派生类的新类名") 
+      return
+    end
+    --此时需要判断新的派生类名和基类名是否一致，派生类的类名不可以是父类的类名
+    if new_metaTable._Protected._BaseClassName == NewClassName then
+      assert(nil,"Child 函数的参数必须与原父类的类名不一致方可") 
+      return
+    end
+    --由于是派生类模板，所以：
+    --类型不变（_Type）
+    --所属的基类的类名不变（_BaseClassName）
+    new_metaTable._Protected._ClassName = NewClassName --设置派生的新类名
+    new_metaTable._Protected._CreateTime = os.time()   --创建类模板的时间
+    return new_class
+  end
+
   --类方法：生成类对象的成员函数(所有生成的成员变量以及成员函数这时候是一样的)
   function New_MetaTable._Public:New(...)
     --仿造类中的形式排序好元表索引的对象
@@ -86,6 +113,7 @@ function Class:Create(ClassName)
     new_metaTable._Public.RegisterTemp = nil                                --把临时变量注册函数设为空(因为New出来的是一个类的对象)
     new_metaTable._Public.RegisterSave = nil                                --把保存变量注册函数设为空(因为New出来的是一个类的对象)
     new_metaTable._Public.New = nil                                         --把New函数设为空(因为New函数是类用来创建类对象的)
+    new_metaTable._Public.Child = nil                                       --把Child函数设空(因为Child函数是类用来派生新类模板的,类对象不可用)
     --私有区域中的也需要保留（但其存放的均是默认初始化的值）可通过Get和Set函数来更换新的值
 
     --处理传回来的参数 ... 但lua5.2开始没有pack函数了，所以可以直接放在table里面处理
@@ -165,11 +193,12 @@ function Class:Create(ClassName)
     end
     
     --设置对象的信息，在_Protected字段里面
-    local base_type = new_metaTable._Protected._ClassName or ""
-    LuaTools.Clean(new_metaTable._Protected)         --清除表中所有的字段
-    new_metaTable._Protected._Type = "object"        --标识为对象类型
-    new_metaTable._Protected._ClassName = base_type  --对象所基于类的类名(可以知道不停对象是不是同类的)
-    new_metaTable._Protected._CreateTime = os.time() --创建对象的时间
+    local class_type,base_type = new_metaTable._Protected._ClassName or "",new_metaTable._Protected._BaseClassName or ""
+    LuaTools.Clean(new_metaTable._Protected)            --清除表中所有的字段
+    new_metaTable._Protected._Type = "object"           --标识为对象类型
+    new_metaTable._Protected._ClassName = class_type    --对象类名(可以知道不同对象是不是同类的)
+    new_metaTable._Protected._BaseClassName = base_type --基类的类名（所属父类模板的类名）
+    new_metaTable._Protected._CreateTime = os.time()    --创建对象的时间
 
     return new_class
   end
@@ -179,9 +208,10 @@ function Class:Create(ClassName)
     assert(nil,"Create 函数的参数必须为字符串，此参数是所创建类的类名") 
     return
   end
-  New_MetaTable._Protected._Type = "class"         --标识为类类型
-  New_MetaTable._Protected._ClassName = ClassName  --设置类名
-  New_MetaTable._Protected._CreateTime = os.time() --创建类模板的时间
+  New_MetaTable._Protected._Type = "class"            --标识为类类型
+  New_MetaTable._Protected._ClassName = ClassName     --设置类名
+  New_MetaTable._Protected._BaseClassName = ClassName --设置基类名（基类名和类名在创建的时候一致 -> 此条件可以判断此类是一个派生类还是一个父类）
+  New_MetaTable._Protected._CreateTime = os.time()    --创建类模板的时间
 
   return New_Class
 end

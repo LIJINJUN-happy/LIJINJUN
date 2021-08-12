@@ -107,7 +107,7 @@ int main()
     //MiddleOfTheList(head);     //链表中间节点
     //DeleteTheNode(head,N);     //删除倒数第N个节点
     //MergeTheList(head1,head2); //合并有序链表
-    JudgeTheList(head);        //判断环存在
+    //JudgeTheList(head);        //判断环存在
     return 0;
 }
 void PrintOutList(Node* head)
@@ -196,11 +196,14 @@ void DeleteTheNode(Node* head, int N)
 {
     Node* p1 = head;
     Node* p2 = head;
+    Node* p3 = head;
+    Node* p4 = head;
     cout << "原链表为：";
     PrintOutList(head);
     for (int i = 0; i < N; i++)
     {
         p2 = p2->next;
+        p4 = p4->next;
     }
     
     while(p2 != nullptr)
@@ -209,6 +212,14 @@ void DeleteTheNode(Node* head, int N)
         p2 = p2->next;
     }
     cout << "  " << "经过查找链表倒数第" << N << "个节点为" << p1->value;
+    while(p4->next != nullptr)
+    {
+        p3 = p3->next;
+        p4 = p4->next;
+    }
+    p3->next = p3->next->next;
+    cout << "\n删除后为：";
+    PrintOutList(head);
 }
 
 void MergeTheList(Node* head1, Node* head2)

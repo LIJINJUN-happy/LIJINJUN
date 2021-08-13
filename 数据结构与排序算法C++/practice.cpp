@@ -1,6 +1,11 @@
 ﻿#include <cstdio>
 #include <iostream>
 #include <vector>
+#include <stdlib.h>
+#include <map>
+#include <string>
+#include <thread>
+
 using namespace std;
 
 void BubblingSort();  //冒泡排序
@@ -25,32 +30,90 @@ struct Node
     Node* next = nullptr;
 };
 
-void PrintOutList(Node* head);
 
+void PrintOutList(Node* head);
 void ReverseTheList(Node * head);            //翻转链表
-void MiddleOfTheList(Node* head);            //链中节点
 void JudgeTheList(Node  * head);             //判断环存在
+void MiddleOfTheList(Node* head);            //链表中间节点
 void MergeTheList(Node* head1, Node* head2); //两个有序链表合并
 void DeleteTheNode(Node* head,int N);        //删除倒数第N个节点
+
+//顺序栈
+struct Stack
+{
+    int size1 = -1;               //number 数组的长度位置
+    int size2 = -1;               //ctrl 数组的长度位置
+    int number[100] = {0};        //放数字
+    char ctrl[100] = {0};         //放计算字符的
+    void Pop(string);             //弹出（参数是指从哪个数组中弹出）
+    void Press(string, string);   //压入（参数是指压入哪个数组，且压入啥）
+    void accumulate(string);      //计算
+};
+
+//队列
+struct Deque
+{
+    int allticket = 50;//一共有的票数
+    Node * head = nullptr;
+    Node * now = nullptr;
+    void BeginSell()   //开始售票了
+    {
+        if (this->allticket >= 1)           //还有票
+        {
+            if (head != nullptr)            //有人排队
+            {
+                _sleep(1000);               //买票的时候需要一秒时间处理一下
+                if (head != now)            //判断剩下止不止一个节点了
+                {
+                    Leave();                //删除头节点
+                    cout <<"好开心，买到票了"<<endl;
+                }
+                else                        //只有一个的话
+                {
+                    delete head;
+                    head = nullptr;
+                    now = nullptr;
+                }
+            }
+            else                            //冇人排队
+            {
+                
+            }
+        }
+        else                                //没票啦
+        {
+            cout << "票已售罄了，拉闸！";
+            return;
+        }
+    }
+    void Come()        //来了
+    {
+
+    }
+    void Leave()       //离开了
+    {
+
+    }
+};
 
 int main()
 {
     cout << "//--------------------------------------------------------//排序算法" << endl << endl;
-    BubblingSort();
+    //BubblingSort();
     cout << endl << endl;
-    InsertSort();
+    //InsertSort();
     cout << endl << endl;
-    PractiseSort();
+    //PractiseSort();
     cout << endl << endl;
-    MergeSort();
+    //MergeSort();
     cout << endl << endl;
-    SoonSort();
+    //SoonSort();
     cout << endl << endl;
-    cout << endl << "//--------------------------------------------------------//链表数据结构" << endl << endl;
+    cout << "//--------------------------------------------------------//链表数据结构" << endl << endl;
     vector<int> sz{11,23,111,23,334,22,1,2,45,578,4 };
     vector<int> merge1{ 1,101,200,303  };
     vector<int> merge2{ 100,300,302,400};
-    Node *head = nullptr , *now = nullptr;
+    Node* head = nullptr , * now = nullptr;
     Node* head1 = nullptr, * now1 = nullptr;
     Node* head2 = nullptr, * now2 = nullptr;
     int N = 7;
@@ -70,7 +133,6 @@ int main()
             now = now->next;
         }
     }
-    now->next = head;
     for (int i = 0; i < merge1.size(); i++)
     {
         if (!now1)
@@ -108,6 +170,13 @@ int main()
     //DeleteTheNode(head,N);     //删除倒数第N个节点
     //MergeTheList(head1,head2); //合并有序链表
     //JudgeTheList(head);        //判断环存在
+
+    //栈的运用（简单计算器）
+    //Stack stack;
+    //stack.accumulate("100+2*300=");
+
+    //队列
+
     return 0;
 }
 void PrintOutList(Node* head)
@@ -203,6 +272,9 @@ void DeleteTheNode(Node* head, int N)
     for (int i = 0; i < N; i++)
     {
         p2 = p2->next;
+    }
+    for (int i = 0; i < N; i++)
+    {
         p4 = p4->next;
     }
     
@@ -211,14 +283,15 @@ void DeleteTheNode(Node* head, int N)
         p1 = p1->next;
         p2 = p2->next;
     }
-    cout << "  " << "经过查找链表倒数第" << N << "个节点为" << p1->value;
-    while(p4->next != nullptr)
+    cout << "  " << "经过查找链表倒数第" << N << "个节点为" << p1->value<<"\n";
+
+    while (p4->next != nullptr)
     {
         p3 = p3->next;
         p4 = p4->next;
     }
     p3->next = p3->next->next;
-    cout << "\n删除后为：";
+    cout << "删除后为：";
     PrintOutList(head);
 }
 
@@ -494,7 +567,7 @@ void SplitMerge(int head, int tail, int* arr)
             for (int j = i; j < tail; j++)
                 arr[j] = arr[j + 1];//逐个往前迁移
             arr[tail] = temp;        //最后把该记录下的值移动到now的地方
-            now--;                  //now索引向前进一位
+            now--;                   //now索引向前进一位
         }
         else
         {
@@ -507,3 +580,158 @@ void SplitMerge(int head, int tail, int* arr)
 }
 
 
+void Stack::Pop(string str)
+{
+    if (str == "number")
+    {
+        if (this->size1 >= 0)
+        {
+            this->number[this->size1] = 0;
+            this->size1 -= 1;
+        }
+    }
+    if (str == "ctrl")
+    {
+        if (this->size2 >= 0)
+        {
+            this->ctrl[this->size2] = '\0';
+            this->size2 -= 1;
+        }
+    }
+}
+void Stack::Press(string str1, string str2)
+{
+    if (str1 == "number")
+    {
+        int num = atoi(str2.c_str()); //转为数值类型
+        this->size1 += 1;
+        this->number[this->size1] = num;
+        cout << "Press  " << num<<"   ";
+    }
+    if (str1 == "ctrl")
+    {
+        this->size2 += 1;
+        this->ctrl[this->size2] = str2[0];
+        cout << "Press  " << str2[0] << "   ";
+    }
+}
+void Stack::accumulate(string str)
+{
+    std::map<char, int> Tab{ {'=',1}, {'+',2}, { '-',2 }, { '*',3 }, { '/',3 } };
+    string temp = "";
+    bool now_deal_with = false;
+    for (int i = 0; i < str.size(); i++)
+    {
+        cout <<"str[i]:"<< str[i]<<"\n";
+        //遇到数字
+        if (str[i] != '+' && str[i] != '-' && str[i] != '*' && str[i] != '/' && str[i] != '=')
+        {
+            temp += str[i];                        //逐渐叠加除了加减乘除外的字符
+            cout << "str[i]: " << str[i] << "  是个数字放链接在temp中,temp:" << temp<<"\n";
+            continue;
+        }
+        else                                       //遇到加减乘除等运算符
+        {
+            if (now_deal_with)                     //先处理
+            {
+                int num_inside = this->number[this->size1];
+                char ch = this->ctrl[this->size2];
+                this->Pop("ctrl");
+                this->Pop("number");
+                cout << "由于有优先处理的情况，所以需要优先处理一下最顶层的运算符以及最新的temp,num_inside 以及 ch 为：" << num_inside << "   " << ch << "\n";
+                if (ch == '*')
+                {
+                    int result = num_inside * atoi(temp.c_str());
+                    temp = to_string(result);
+                }
+                else
+                {
+                    if (ch == '/')
+                    {
+                        int result = num_inside / atoi(temp.c_str());
+                        temp = to_string(result);
+                    }
+                }
+                now_deal_with = false;
+            }
+
+            this->Press("number",temp);            //先把数字放进去数组中
+            cout << "遇到了运算符组成的数字放进number里" << temp << "\n";
+            if(this->size2 == -1)
+            {
+                cout << "crtl中没存在任何一个字符\n";
+                string sss{ str[i] };
+                this->Press("ctrl", sss);  //再把运算符放进去另一个数组中去，没有运算符在此数组中，最起码放一个进去
+            }
+            else
+            {
+                if (this->size2 >= 0)              //里面至少有一个运算符了已经（进行对比,只有新来的优先级大才可以进行运算，否者继续加入数组中）
+                {
+                    if (str[i] == '=')
+                    {
+                        cout << "遇到了等于号了，直接退出并结算\n";
+                        break;                     //假如运算符数组里的数量大于一个的话，碰到=要直接退出，因为证明这时候的运算符属于同一优先级Level的
+                    }
+                    else
+                    {
+                        cout << "遇到非等于号了\n";
+                        int c1 = Tab.at(this->ctrl[this->size2]);     //数组中最顶层的运算符
+                        int c2 = Tab.at(str[i]);                      //未假如数组总的运算符
+                        cout << "c1 c2 优先级分别是" << c1 << "   " << c2 << " 对应符号为" << this->ctrl[this->size2] << "  " << str[i]<<endl;
+                        //假如容器内的运算符优先级大于这次待处理的运算符话
+                        if(c1>c2)
+                        {
+                            cout << "c1>c2" << "\n";
+                        }
+                        else
+                        {   //假如容器内的运算符优先级小于这次待处理的运算符话，计算外层的
+                            if(c1<c2)
+                            {
+                                cout << "c1<c2" << "\n";
+                                string sss{ str[i] };
+                                this->Press("ctrl", sss);
+                                now_deal_with = true;                    //下次碰到运算符就先算旧的那个
+
+                            }
+                            //假如容器内的运算符优先级等于这次待处理的运算符话直接放进去，同级不计算
+                            else
+                            {
+                                cout << "c1 = c2" << "\n";
+                                string sss{ str[i] };
+                                this->Press("ctrl", sss);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    printf("有出错了哟!");
+                    _ASSERT(false);
+                }
+            }
+            temp.clear();                          //恢复
+        }
+    }
+    //到了这一步都是统一level的运算符
+    int back = 0;
+    for (int iii = 0,jjj = 0  ; iii <= this->size1;iii+=2,++jjj)
+    {
+        if (this->ctrl[jjj] == '+')
+        {
+            back += (this->number[iii] + this->number[iii + 1]);
+        }
+        if (this->ctrl[jjj] == '-')
+        {
+            back += (this->number[iii] - this->number[iii + 1]);
+        }
+        if (this->ctrl[jjj] == '*')
+        {
+            back += (this->number[iii] * this->number[iii + 1]);
+        }
+        if (this->ctrl[jjj] == '/')
+        {
+            back += (this->number[iii] / this->number[iii + 1]);
+        }
+    }
+    cout << "结果为： " << back;
+}

@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <thread>
+#include <Windows.h>
 
 using namespace std;
 
@@ -54,47 +55,84 @@ struct Stack
 struct Deque
 {
     int allticket = 50;//一共有的票数
+    int size = 0;
     Node * head = nullptr;
-    Node * now = nullptr;
+    Node * tail = nullptr;
     void BeginSell()   //开始售票了
     {
-        if (this->allticket >= 1)           //还有票
+        while (true)
         {
-            if (head != nullptr)            //有人排队
+            //cout << "总票数为：" <<this->allticket <<endl;
+            if (this->allticket >= 1)           //还有票
             {
-                _sleep(1000);               //买票的时候需要一秒时间处理一下
-                if (head != now)            //判断剩下止不止一个节点了
+                if (head != nullptr)            //有人排队
                 {
-                    Leave();                //删除头节点
-                    cout <<"好开心，买到票了"<<endl;
+                    Sleep(3000);               //买票的时候需要3秒时间处理一下
+                    if (head != tail)           //判断剩下止不止一个节点了
+                    {
+                        Leave();                //删除头节点
+                    }
+                    else                        //只有一个的话
+                    {
+                        delete head;
+                        head = nullptr;
+                        tail = nullptr;
+                    }
+                    cout << "票数还剩余 :" << this->allticket << endl;
                 }
-                else                        //只有一个的话
+                else                            //冇人排队
                 {
-                    delete head;
-                    head = nullptr;
-                    now = nullptr;
+                    ;
                 }
             }
-            else                            //冇人排队
+            else                                //没票啦
             {
-                
+                cout << "票已售罄了，拉闸！";
+                return;
+            }
+       }
+    }
+    void Come()                  //来了
+    {
+        if (tail != head)        //不止一人在排队
+        {
+            tail->next = new Node();
+            tail = tail->next;
+            tail->value = 1;
+        }
+        else                     //一个或者没有人
+        {
+            if (tail != nullptr && head != nullptr)    //一个人
+            {
+                tail->next = new Node();
+                tail = tail->next;
+                tail->value = 1;
+            }
+            else                 //无人
+            {
+                head = new Node();
+                head->value = 1;
+                tail = head;
             }
         }
-        else                                //没票啦
-        {
-            cout << "票已售罄了，拉闸！";
-            return;
-        }
-    }
-    void Come()        //来了
-    {
+        this->size += 1;
 
+        cout << "来排队了，数了一下，队伍长度为：" << this->size<<endl;
     }
-    void Leave()       //离开了
+    void Leave()                //离开了
     {
-
+        Node* will_delete = head;
+        head = head->next;
+        this->size -= 1;
+        this->allticket -= 1;
+        cout << "好开心，买到票了，溜了溜了, 数了一下，队伍长度为： " << this->size << endl;
     }
 };
+void run(Deque * d)
+{
+    d->BeginSell();
+}
+
 
 int main()
 {
@@ -176,6 +214,21 @@ int main()
     //stack.accumulate("100+2*300=");
 
     //队列
+    Deque *deque = new Deque();
+    thread thread(run,deque);
+    thread.detach();
+    while (true)
+    {
+        if (deque->allticket == 0)
+            break;
+        char c = getchar();
+        int num = atoi(&c);
+        cout << num<<"个人来排队了" << endl;
+        for (int i = 0; i < num; i++)
+        {
+            deque->Come();
+        }
+    }
 
     return 0;
 }

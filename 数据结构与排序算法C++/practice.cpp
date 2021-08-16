@@ -21,6 +21,7 @@ vector<int> Merge(vector<int>, vector<int>); //合
 
 void SoonSort();      //快速排序
 void SplitMerge(int, int, int*);
+void SplitMerge_Version_Two(int, int, int*);
 
 void FindTheNumber1(int, int, int*); //二分查找算法非递归
 void FindTheNumber2();               //二分查找算法递归
@@ -74,7 +75,8 @@ struct Deque
                     }
                     else                        //只有一个的话
                     {
-                        delete head;
+                        Leave();
+                        //delete head;
                         head = nullptr;
                         tail = nullptr;
                     }
@@ -134,6 +136,23 @@ void run(Deque * d)
 }
 
 
+//递归算法（走楼梯，走1步或者走两步，N层阶梯）
+int Step(int n)
+{
+    if (n <= 2)
+    {
+        if (n == 1 || n == 2)
+        {
+            return n;
+        }
+        if (n <= 0)
+        {
+            return 0;
+        }
+    }
+    return Step(n-1) + Step(n-2);
+}
+
 int main()
 {
     cout << "//--------------------------------------------------------//排序算法" << endl << endl;
@@ -145,7 +164,7 @@ int main()
     cout << endl << endl;
     //MergeSort();
     cout << endl << endl;
-    //SoonSort();
+    SoonSort();
     cout << endl << endl;
     cout << "//--------------------------------------------------------//链表数据结构" << endl << endl;
     vector<int> sz{11,23,111,23,334,22,1,2,45,578,4 };
@@ -214,6 +233,7 @@ int main()
     //stack.accumulate("100+2*300=");
 
     //队列
+    /*
     Deque *deque = new Deque();
     thread thread(run,deque);
     thread.detach();
@@ -228,10 +248,14 @@ int main()
         {
             deque->Come();
         }
-    }
+    }*/
 
+    //递归算法（走楼梯，走1步或者走两步，N层阶梯）
+    //int step_way_num = Step(30);
+    //cout << "结果递归算法，走楼梯的方式数为："<<step_way_num;
     return 0;
 }
+
 void PrintOutList(Node* head)
 {
     while (true)
@@ -585,13 +609,13 @@ void SoonSort()
 {
     int arr[11]{ 11,23,111,23,334,22,1,2,45,578,4 };
     int len = 11;
-    cout << "原数组为：";
+//cout << "原数组为：";
     for (int i = 0; i < 11; i++)
     {
         cout << arr[i] << "  ";
     }
-    cout << "  " << "经过快速排序法排序后为： ";
     SplitMerge(0, len - 1, arr);
+    cout << "  " << "经过快速排序法排序后为： ";
     for (int i = 0; i < 11; i++)
     {
         cout << arr[i] << "  ";
@@ -631,7 +655,53 @@ void SplitMerge(int head, int tail, int* arr)
     SplitMerge(now , tail, arr);
     return;
 }
-
+void SplitMerge_Version_Two(int head, int tail, int* arr)
+{
+    if(head >= tail)               //假如是只有一个数了，直接返回（多于2个才需要进行操作）
+    {
+        return;
+    }
+    //到了这一步已经确认至少两个了有数
+    int i = head;
+    int j = tail;
+    int who_move = 2;          //偶数是j动，奇数是i动
+    int point_value = arr[head];
+    while (i < j)
+    {
+        if (who_move % 2 == 0) //偶数
+        {
+            if (arr[j] < point_value)  //小于分界值
+            {
+                arr[i] = arr[j];       //与arr[i]对换
+                who_move++;
+                arr[j] = point_value;
+                i += 1;
+            }
+            else
+                j-=1;
+        }
+        else
+        {
+            if (arr[i] > point_value)  //大于分界值
+            {
+                arr[j] = arr[i];       //与arr[i]对换
+                who_move++;
+                arr[i] = point_value;
+                j -= 1;
+            }
+            else
+                i+=1;
+        }
+        cout << "\n";
+        for (int i = 0; i < 11; i++)
+        {
+            cout << arr[i] << "  ";
+        }
+    }
+    cout << "\n-----------------------------------------------";
+    SplitMerge_Version_Two(head, i, arr);
+    SplitMerge_Version_Two(i+1 , tail, arr);
+}
 
 void Stack::Pop(string str)
 {

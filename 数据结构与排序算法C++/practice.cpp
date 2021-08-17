@@ -23,8 +23,12 @@ void SoonSort();      //快速排序
 void SplitMerge(int, int, int*);
 void SplitMerge_Version_Two(int, int, int*);
 
-void FindTheNumber1(int, int, int*); //二分查找算法非递归
-void FindTheNumber2();               //二分查找算法递归
+int Step(int n);      //递归例子（走楼梯）
+
+void FindTheNumber1(int);                   //0至100中，二分查找算法非递归
+void FindTheNumber2(int,int,int);           //0至100中，二分查找算法递归
+void FindTheNumber3(int, int, int*,int);    //二分查找算法递归（有序数组中第一个某个数值）
+void FindTheNumber4(int, int, int*, int);   //二分查找算法递归（有序数组中最后一个某个数值）
 
 struct Node
 {
@@ -135,24 +139,6 @@ void run(Deque * d)
     d->BeginSell();
 }
 
-
-//递归算法（走楼梯，走1步或者走两步，N层阶梯）
-int Step(int n)
-{
-    if (n <= 2)
-    {
-        if (n == 1 || n == 2)
-        {
-            return n;
-        }
-        if (n <= 0)
-        {
-            return 0;
-        }
-    }
-    return Step(n-1) + Step(n-2);
-}
-
 int main()
 {
     cout << "//--------------------------------------------------------//排序算法" << endl << endl;
@@ -164,7 +150,7 @@ int main()
     cout << endl << endl;
     //MergeSort();
     cout << endl << endl;
-    SoonSort();
+    //SoonSort();
     cout << endl << endl;
     cout << "//--------------------------------------------------------//链表数据结构" << endl << endl;
     vector<int> sz{11,23,111,23,334,22,1,2,45,578,4 };
@@ -253,6 +239,12 @@ int main()
     //递归算法（走楼梯，走1步或者走两步，N层阶梯）
     //int step_way_num = Step(30);
     //cout << "结果递归算法，走楼梯的方式数为："<<step_way_num;
+
+    int sssz[14] = { 1,2,3,11,19,22,23,33,33,111,212,212,578,40000 };
+    //FindTheNumber1(33);
+    //FindTheNumber2(0,100,33);
+    //FindTheNumber3(0, 13,sssz ,212);
+    //FindTheNumber4(0, 13,sssz ,212);
     return 0;
 }
 
@@ -703,6 +695,7 @@ void SplitMerge_Version_Two(int head, int tail, int* arr)
     SplitMerge_Version_Two(i+1 , tail, arr);
 }
 
+
 void Stack::Pop(string str)
 {
     if (str == "number")
@@ -722,6 +715,7 @@ void Stack::Pop(string str)
         }
     }
 }
+
 void Stack::Press(string str1, string str2)
 {
     if (str1 == "number")
@@ -738,6 +732,7 @@ void Stack::Press(string str1, string str2)
         cout << "Press  " << str2[0] << "   ";
     }
 }
+
 void Stack::accumulate(string str)
 {
     std::map<char, int> Tab{ {'=',1}, {'+',2}, { '-',2 }, { '*',3 }, { '/',3 } };
@@ -857,4 +852,122 @@ void Stack::accumulate(string str)
         }
     }
     cout << "结果为： " << back;
+}
+
+//递归算法（走楼梯，走1步或者走两步，N层阶梯）
+int Step(int n)
+{
+    if (n <= 2)
+    {
+        if (n == 1 || n == 2)
+        {
+            return n;
+        }
+        if (n <= 0)
+        {
+            return 0;
+        }
+    }
+    return Step(n - 1) + Step(n - 2);
+}
+
+void FindTheNumber1(int num)                               //二分查找算法非递归
+{
+    int head = 0; int tail = 100; int middle = (head + tail) / 2;
+    while (middle != num )
+    {
+        middle = (head + tail) / 2;
+        printf("当前head=%d tail=%d 其中位数为%d\n",head,tail, middle);
+        if (middle < num)
+        {
+            head = middle;
+        }
+        else
+        {
+            tail = middle;
+        }
+    }
+    cout << "最后的结果为："<<middle<<endl;
+}
+
+void FindTheNumber2(int head, int tail, int num)           //二分查找算法递归
+{
+    int middle = (head + tail) / 2;
+    printf("当前head=%d tail=%d 其中位数为%d\n", head, tail, middle);
+    if (middle == num)
+    {
+        printf("最后结果为：%d\n",middle);
+        return;
+    }
+    else
+    {
+        if (middle < num)
+        {
+            FindTheNumber2(middle,tail,num);
+        }
+        else
+        {
+            FindTheNumber2(head,middle,num);
+        }
+    }
+}
+
+void FindTheNumber3(int head, int tail, int* arr, int num)  //二分查找算法递归（有序数组中第一个某个数值）
+{
+    int middle = (head + tail) / 2;
+    printf("当前头索引为head=%d 尾部索引为tail=%d 其中间索引为%d，arr【索引】值为%d\n", 
+        head, tail, middle, arr[middle]);
+    if (arr[middle] == num)
+    {
+        if (middle != 0 && arr[middle-1] == num)
+        {
+            FindTheNumber3(middle-1, middle - 1, arr, num);
+        }
+        else
+        {
+            printf("首位第一个指定结果为：arr[ %d ] = %d\n", middle, arr[middle]);
+            return;
+        }
+    }
+    else
+    {
+        if (arr[middle] < num)
+        {
+            FindTheNumber3(middle, tail, arr,num);
+        }
+        else
+        {
+            FindTheNumber3(head, middle, arr, num);
+        }
+    }
+}
+
+void FindTheNumber4(int head, int tail, int* arr, int num)  //二分查找算法递归（有序数组中最后一个某个数值）
+{
+    int middle = (head + tail) / 2;
+    printf("当前头索引为head=%d 尾部索引为tail=%d 其中间索引为%d，arr【索引】值为%d\n", 
+        head, tail, middle, arr[middle]);
+    if (arr[middle] == num)
+    {
+        if (middle != 11 && arr[middle+1] == num)
+        {
+            FindTheNumber4(middle + 1, middle + 1, arr, num);
+        }
+        else
+        {
+            printf("最后一个指定值结果为：arr[ %d ] = %d\n", middle, arr[middle]);
+            return;
+        }
+    }
+    else
+    {
+        if (arr[middle] < num)
+        {
+            FindTheNumber4(middle, tail, arr, num);
+        }
+        else
+        {
+            FindTheNumber4(head, middle, arr, num);
+        }
+    }
 }

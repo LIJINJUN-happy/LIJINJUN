@@ -1,0 +1,68 @@
+用来给Lua解析器调用的 C++dll库生成步骤：
+
+1.新建一个win32 的 dll 项目（vs2019的windows桌面向导）
+
+2.准备工作为：C与lua交互前的准备工作（对应文档内操作设置好即可）
+
+3.新建一个cpp文件，文件名和项目名字必须一致的，否则在Lua调用的时候只会找到文件名却不能被正确require
+
+4.参考以下代码，编写C++函数
+#include <stdio.h> 
+#include <string.h> 
+#include "src/lua.hpp"    //这里的话就是直接以C的方式来编译了
+#include "src/lauxlib.h" 
+#include "src/lualib.h" 
+
+//待注册的C函数 
+//需要说明的是，该函数必须以C的形式被导出，因此extern "C"是必须的。 
+//定义一个求取平均数的函数 
+extern "C" int average(lua_State * L)
+{
+    double sum = 0;
+    int num = lua_gettop(L);//获取参数的个数 
+    for (int i = 1; i <= num; i++)
+        sum += lua_tonumber(L, i);
+    //依次获取所有参数值，相加 
+    lua_pushnumber(L, sum / num);//将平均数压如栈，供lua获取 
+
+    return 1;//返回返回值个数，通知lua应该在栈里取几个值作为返回结果 
+}
+
+extern "C" int Communicate(lua_State * L)
+{
+    const char* name = lua_tostring(L, 1);//获取字符串 
+    printf("Hello %s\n", name);
+    printf("I`m in C,I send a message to you");
+    lua_pushstring(L, "This message from C");
+    return 1;
+}
+//luaL_Reg结构体的第一个字段为字符串，在注册时用于通知Lua该函数的名字。 
+//第一个字段为C函数指针。 
+//结构体数组中的最后一个元素的两个字段均为NULL，用于提示Lua注册函数已经到达数组的末尾。 
+static luaL_Reg cMethods[] = {
+    { "average", average },
+    { "Communicate", Communicate },
+    { NULL, NULL }
+};
+
+//该C库的唯一入口函数。其函数签名等同于上面的注册函数。见如下几点说明： 
+//1. 我们可以将该函数简单的理解为模块的工厂函数。 
+//2. 其函数名必须为luaopen_xxx，其中xxx表示library名称。Lua代码require "xxx"需要与之对应。 
+//3. 在luaL_register的调用中，其第一个字符串参数为模块名"xxx"，第二个参数为待注册函数的数组。 
+（luaL_register此函数已在5.1后被移除，现在不可以用了，现在用lua_newtable(L)）
+//4. 需要强调的是，所有需要用到"xxx"的代码，不论C还是Lua，都必须保持一致，这是Lua的约定， 
+//   否则将无法调用。 
+extern "C" __declspec(dllexport)
+int luaopen_Mydll(lua_State * L)//Mydll是到时候需要被require的一个table名字，这个名字必须保证和cpp文件以及项目文件一直才行
+{
+    //const char* libName = "Mydll";
+    //luaL_register(L, libName, cMethods);
+    lua_newtable(L);
+    //先把一个table压入VS，然后在调用luaL_setfuncs就会把所以的func存到table中
+    //注意不像luaL_register这个table是个无名table，可以在的使用只用一个变量来存入这个table。
+    //e.g local clib = require "libname". 这样就不会污染全局环境。比luaL_register更好。
+    luaL_setfuncs(L, cMethods, 0);
+    return 1;
+}
+
+5.不要运行，不然会报错（非win32程序），我们只需要按下 ctrl+shift+B即可，这样就会生成一个dll库，放进我们自己生成的Lua.exe目录下，便可以require此dll库了

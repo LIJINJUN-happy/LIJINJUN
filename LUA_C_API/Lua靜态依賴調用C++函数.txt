@@ -1,0 +1,51 @@
+1.新建一个空的win32控制台工程。
+
+2.完成C与Lua交互的准备工作。
+
+3.把lua源碼中的lib文件夹复制进来c++源文件同级目录，然后->链接器->附加依赖项->将lib文件夹下的lib文件包含进来。
+
+4.在C++文件内编写静态函数（lua调用C++函数的时候参数会被放进交栈中，所以我们要从栈中获取Lua调用函数时候所用的参数） 如：
+static int average(lua_State *L)
+{
+	/* 得到参数个数 */
+	int n = lua_gettop(L);
+	double sum = 0;
+	int i;
+ 
+	/* 循环求参数之和 */
+	for (i = 1; i <= n; i++)
+	{
+		/* 求和 */
+		sum += lua_tonumber(L, i);
+	}
+	/* 压入平均值 */
+	lua_pushnumber(L, sum / n);
+	/* 压入和 */
+	lua_pushnumber(L, sum);
+	/* 返回返回值的个数 */
+	return 2;
+}
+
+5.怎么把C++中的函数注册到Lua中
+如下：
+                以下代码中，L为：
+               /* 指向Lua解释器的指针 */
+               lua_State* L;
+
+	/* 注册函数 */
+	lua_register(L, "average", average);
+                参数二为我们Lua中的函数命名 
+                参数三是C++中需要注册的函数名
+
+
+
+6.lua文件：
+可以直接调用
+avg, sum = average(10, 20, 30, 40, 50)
+print("The average is ", avg)
+print("The sum is ", sum)
+
+
+7.当我们执行文件以上lua文件的时候，当调用average的时候参数10, 20, 30, 40, 50被压入交互栈中（L）
+然后被注册的C++函数（average）被调用，但是需要自己手动取出栈中的参数（如其上的lua_tonumber(L, i) 操作，把参数弹出栈）。
+最后我们的结果也需要手动压入栈中返回给Lua代码区作为返回结果。
